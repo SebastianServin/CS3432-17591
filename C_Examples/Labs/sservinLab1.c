@@ -22,6 +22,7 @@ int count_tokens(char *str)
    int count = 0;
    for (char c = *str; c; c = *++str)
    {
+      // Adds one if the character is a space.
       if (delim_character(c))
       {
          count++;
@@ -31,6 +32,7 @@ int count_tokens(char *str)
    return count;
 }
 
+// Gets the length of a token (finish - start) and copies it from the original string to the new one.
 char *copy_str(char *inStr, int start, int finish)
 {
    char *toReturn = (char *)malloc((finish - start) * sizeof(char));
@@ -44,6 +46,9 @@ char *copy_str(char *inStr, int start, int finish)
    return toReturn;
 }
 
+
+// Loops through string, finds where a token ends and copies it into a new variable.
+// New string is then assigned to the double pointer.
 char **tokenize(char *str)
 {
    int numberOfTokens = count_tokens(str);
@@ -77,6 +82,7 @@ char **tokenize(char *str)
    return words;
 }
 
+// Loops through double pointer and prints tokens.
 void print_all_tokens(char **tokens)
 {
    int count = 0;
@@ -89,7 +95,7 @@ void print_all_tokens(char **tokens)
 
 int main()
 {
-   printf("Plesae enter the input string: ");
+   printf("Please enter the input string: ");
    char str[10000];
    gets(str);
    char *pointerStr = str;
