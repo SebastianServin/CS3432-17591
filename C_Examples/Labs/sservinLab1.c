@@ -19,13 +19,17 @@ bool delim_character(char c)
    space-separated word*/
 char *word_start(char *str)
 {
-   for (; str; *str++)
+   while (delim_character(*str))
    {
-      if ((delim_character(*str)))
-      {
-         *str++;
-         return str;
-      }
+      *str++;
+   }
+   return str;
+}
+
+char *delete_word(char *str)
+{
+   while (!delim_character(*str)) {
+      *str++;
    }
 
    return str;
@@ -41,12 +45,14 @@ char *end_word(char *str)
 int count_tokens(char *str)
 {
    int count = 0;
-   for (char c = *str; c; c = *++str)
-   {
-      // Adds one if the character is a space.
-      if (delim_character(c))
-      {
+   bool wordDetected = false;
+   for(; *str; *str++) {
+      if (!delim_character(*str) && !wordDetected) {
+         wordDetected = true;
          count++;
+      }
+      if (delim_character(*str) && wordDetected) {
+         wordDetected = false;
       }
    }
 
@@ -70,26 +76,26 @@ char *copy_str(char *inStr, int length)
 // New string is then assigned to the double pointer.
 char **tokenize(char *str)
 {
-   int numberOfTokens = count_tokens(str);
+   char *numberOfTokensToCount = str;
+   int numberOfTokens = count_tokens(numberOfTokensToCount);
    int c = 0;
    char **words = (char **)malloc(numberOfTokens * sizeof(char *));
-   int ye = 0;
    int count = 0;
    int start = 0;
    int finish = -1;
 
-   // Do this to make sure it doesn't start with a space.
-
-   while (*str) {
-      if (delim_character(str[count])) {
+   str = word_start(str);
+   while (c != numberOfTokens)
+   {
+      if (delim_character(str[count]))
+      {
          char *temp = (char *)malloc((count) * sizeof(char));
          temp = copy_str(str, count);
          words[c] = temp;
          count = -1;
          c++;
-         // printf("STRING BEFORE CUTTING=%s\n", str);
+         str = delete_word(str);
          str = word_start(str);
-         // printf("STRING AFTER CUTTING=%s\n", str);
       }
       count++;
    }
@@ -113,8 +119,9 @@ int main()
    printf("Please enter the input string: ");
    char str[10000];
    gets(str);
+   char *pointerToCount = str;
+   int numberOfTokens = count_tokens(pointerToCount);
    char *pointerStr = str;
-   int numberOfTokens = count_tokens(pointerStr);
    char **tokens = (char **)malloc((numberOfTokens) * sizeof(char));
    print_all_tokens(tokenize(pointerStr));
 }
