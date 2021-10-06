@@ -280,47 +280,13 @@ void print_regs()
  */
 int main()
 {
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-
 	// Do not write any code between init_regs
 	init_regs(); // DO NOT REMOVE THIS LINE
 
 	// Below is a sample program to a write-read. Overwrite this with your own code.
-	// write_read_demo();
+	write_read_demo();
 	char s[] = "ADDI X13 X20 130";
 	char *p = s;
-	print_regs();
-	printf("\n");
-	printf("\n");
 	interpret(p);
-	print_regs();
-
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
-	// CHANGE TOKENIZER
 	return 0;
 }
