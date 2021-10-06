@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <string.h>
+// #include <string.h>
 #include <stdlib.h>	   // malloc & free
 #include <stdint.h>	   // use guaranteed 64-bit integers
 #include "tokenizer.h" // Create header file and reference that
@@ -60,37 +60,133 @@ int customSwitch(char *str)
 		return 7;
 }
 
-void addi(char *tokens)
+void addi(char **tokens)
 {
-	*tokens++;
-	int store_in = atoi(tokens);
+	int store_in = -1;
+	char *to_store_in_pointer = *tokens;
+	*to_store_in_pointer++;
+	for (; *to_store_in_pointer; *to_store_in_pointer++)
+	{
+		if (store_in == -1)
+		{
+			store_in = *to_store_in_pointer - '0';
+		}
+		else
+		{
+			store_in = store_in * 10;
+			store_in = store_in + (*to_store_in_pointer - '0');
+		}
+	}
 
-	tokens = strtok(NULL, " ");
-	*tokens++;
-	int register_one = atoi(tokens);
+	**tokens++;
+	int add_one = -1;
+	char *add_one_pointer = *tokens;
+	*add_one_pointer++;
+	for (; *add_one_pointer; *add_one_pointer++)
+	{
+		if (add_one == -1)
+		{
+			add_one = *add_one_pointer - '0';
+		}
+		else
+		{
+			add_one = add_one * 10;
+			add_one = add_one + (*add_one_pointer - '0');
+		}
+	}
 
-	tokens = strtok(NULL, " ");
-	int number = atoi(tokens);
+	**tokens++;
+	bool negative = false;
+	int add_two = -1;
+	char *add_two_pointer = *tokens;
+	if (*add_two_pointer == '-')
+	{
+		*add_two_pointer++;
+		negative = true;
+	}
+	for (; *add_two_pointer; *add_two_pointer++)
+	{
+		if (add_two == -1)
+		{
+			add_two = *add_two_pointer - '0';
+		}
+		else
+		{
+			add_two = add_two * 10;
+			add_two = add_two + (*add_two_pointer - '0');
+		}
+	}
 
-	reg[store_in] = reg[register_one] + number;
+	if (negative)
+	{
+		add_two = add_two * -1;
+	}
+	reg[store_in] = reg[add_one] + add_two;
 }
 
-void add(char *tokens)
+void add(char **tokens)
 {
-	*tokens++;
-	int store_in = atoi(tokens);
+	int store_in = -1;
+	char *to_store_in_pointer = *tokens;
+	*to_store_in_pointer++;
+	for (; *to_store_in_pointer; *to_store_in_pointer++)
+	{
+		if (store_in == -1)
+		{
+			store_in = *to_store_in_pointer - '0';
+		}
+		else
+		{
+			store_in = store_in * 10;
+			store_in = store_in + (*to_store_in_pointer - '0');
+		}
+	}
 
-	tokens = strtok(NULL, " ");
-	*tokens++;
-	int register_one = atoi(tokens);
+	**tokens++;
+	int add_one = -1;
+	char *add_one_pointer = *tokens;
+	*add_one_pointer++;
+	for (; *add_one_pointer; *add_one_pointer++)
+	{
+		if (add_one == -1)
+		{
+			add_one = *add_one_pointer - '0';
+		}
+		else
+		{
+			add_one = add_one * 10;
+			add_one = add_one + (*add_one_pointer - '0');
+		}
+	}
 
-	tokens = strtok(NULL, " ");
-	*tokens++;
-	int register_two = atoi(tokens);
+	**tokens++;
+	int add_two = -1;
+	char *add_two_pointer = *tokens;
+	*add_two_pointer++;
 
-	reg[store_in] = reg[register_one] + reg[register_two];
+	for (; *add_two_pointer; *add_two_pointer++)
+	{
+		if (add_two == -1)
+		{
+			add_two = *add_two_pointer - '0';
+		}
+		else
+		{
+			add_two = add_two * 10;
+			add_two = add_two + (*add_two_pointer - '0');
+		}
+	}
+
+	reg[store_in] = reg[add_one] + reg[add_two];
 }
 
+void sw(char **tokens) {
+
+}
+
+void lw(char **tokens) {
+	
+}
 /**
  * Fill out this function and use it to read interpret user input to execute RV64 instructions.
  * You may expect that a single, properly formatted RISC-V instruction string will be passed
@@ -98,12 +194,10 @@ void add(char *tokens)
  */
 bool interpret(char *instr)
 {
-
-	char *tokens;
-	tokens = strtok(instr, " ");
-	int expressionInt = customSwitch(tokens);
-
-	tokens = strtok(NULL, " ");
+	char **tokens;
+	tokens = tokenize(instr, " ");
+	int expressionInt = customSwitch(*tokens);
+	*tokens++;
 
 	/*
 	1 -> LW
@@ -206,7 +300,7 @@ int main()
 
 	// Below is a sample program to a write-read. Overwrite this with your own code.
 	// write_read_demo();
-	char s[] = "ADDI X16 X5 15";
+	char s[] = "ADDI X13 X20 130";
 	char *p = s;
 	print_regs();
 	printf("\n");
