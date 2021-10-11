@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <stdlib.h>	   // malloc & free
-#include <stdint.h>	   // use guaranteed 64-bit integers
-#include "tokenizer.h" // Create header file and reference that
-#include "memory.h"	   // built-in functions to read and write to a specific file
+#include <stdlib.h>		 // malloc & free
+#include <stdint.h>		 // use guaranteed 64-bit integers
+#include "sservinLab1.h" // Create header file and reference thatm
+#include "memory.h"		 // built-in functions to read and write to a specific file
 
 int32_t *reg; // Array of 32 32-bit registers
 
@@ -24,16 +24,17 @@ void init_regs()
 		reg[i] = i;
 }
 
+// Checks if a string equals another
 bool equals(char *strOne, char strTwo[])
 {
 	char *strTwoPointer = strTwo;
-	for (; *strOne; *strOne++)
+	for (; *strOne; strOne++)
 	{
 		if (*strOne != *strTwoPointer)
 		{
 			return false;
 		}
-		*strTwoPointer++;
+		strTwoPointer++;
 	}
 
 	return true;
@@ -57,14 +58,17 @@ int customSwitch(char *str)
 		return 6;
 	if (equals(str, "XOR"))
 		return 7;
+
+	return -1;
 }
 
 void addi(char **tokens)
 {
+	// Loops through string to get the number where addition will be stored.
 	int32_t store_in = -1;
 	char *to_store_in_pointer = *tokens;
-	*to_store_in_pointer++;
-	for (; *to_store_in_pointer; *to_store_in_pointer++)
+	to_store_in_pointer++;
+	for (; *to_store_in_pointer; to_store_in_pointer++)
 	{
 		if (store_in == -1)
 		{
@@ -77,11 +81,12 @@ void addi(char **tokens)
 		}
 	}
 
-	**tokens++;
+	// Loops through string to get the first nunmber which will be added.
+	tokens++;
 	int32_t add_one = -1;
 	char *add_one_pointer = *tokens;
-	*add_one_pointer++;
-	for (; *add_one_pointer; *add_one_pointer++)
+	add_one_pointer++;
+	for (; *add_one_pointer; add_one_pointer++)
 	{
 		if (add_one == -1)
 		{
@@ -94,16 +99,17 @@ void addi(char **tokens)
 		}
 	}
 
-	**tokens++;
+	// Loops through string to get the second number which will be added.
+	tokens++;
 	bool negative = false;
 	int32_t add_two = -1;
 	char *add_two_pointer = *tokens;
 	if (*add_two_pointer == '-')
 	{
-		*add_two_pointer++;
+		add_two_pointer++;
 		negative = true;
 	}
-	for (; *add_two_pointer; *add_two_pointer++)
+	for (; *add_two_pointer; add_two_pointer++)
 	{
 		if (*add_two_pointer == '\n' || *add_two_pointer == '\0')
 		{
@@ -120,6 +126,7 @@ void addi(char **tokens)
 		}
 	}
 
+	// Checks if number is negative
 	if (negative)
 	{
 		add_two = add_two * -1;
@@ -129,10 +136,11 @@ void addi(char **tokens)
 
 void add(char **tokens)
 {
+	// Loops through string to get the number where addition will be stored.
 	int32_t store_in = -1;
 	char *to_store_in_pointer = *tokens;
-	*to_store_in_pointer++;
-	for (; *to_store_in_pointer; *to_store_in_pointer++)
+	to_store_in_pointer++;
+	for (; *to_store_in_pointer; to_store_in_pointer++)
 	{
 		if (store_in == -1)
 		{
@@ -145,11 +153,12 @@ void add(char **tokens)
 		}
 	}
 
-	**tokens++;
+	// Loops through string to get the first number which will be added.
+	tokens++;
 	int32_t add_one = -1;
 	char *add_one_pointer = *tokens;
-	*add_one_pointer++;
-	for (; *add_one_pointer; *add_one_pointer++)
+	add_one_pointer++;
+	for (; *add_one_pointer; add_one_pointer++)
 	{
 		if (add_one == -1)
 		{
@@ -162,12 +171,13 @@ void add(char **tokens)
 		}
 	}
 
-	**tokens++;
+	// Loops through string to get the second number which will be added.
+	tokens++;
 	int32_t add_two = -1;
 	char *add_two_pointer = *tokens;
-	*add_two_pointer++;
+	add_two_pointer++;
 
-	for (; *add_two_pointer; *add_two_pointer++)
+	for (; *add_two_pointer; add_two_pointer++)
 	{
 		if (*add_two_pointer == '\n' || *add_two_pointer == '\0')
 		{
@@ -189,11 +199,12 @@ void add(char **tokens)
 
 void sw(char **tokens)
 {
+	// Loops through string to get the number where info will be read from.
 	char *mem_file = "mem.txt";
 	int32_t get_from = -1;
 	char *get_from_pointer = *tokens;
-	*get_from_pointer++;
-	for (; *get_from_pointer; *get_from_pointer++)
+	get_from_pointer++;
+	for (; *get_from_pointer; get_from_pointer++)
 	{
 		if (get_from == -1)
 		{
@@ -205,13 +216,21 @@ void sw(char **tokens)
 			get_from = get_from + (*get_from_pointer - '0');
 		}
 	}
-	**tokens++;
+	tokens++;
 
+	bool negative = false;
 	bool offset_initialized = false;
 	int32_t offset;
 	char *offset_pointer = *tokens;
 
-	for (; *offset_pointer; *offset_pointer++)
+	// Loops through string to get offset
+
+	if (*offset_pointer == '-')
+	{
+		negative = true;
+		offset_pointer++;
+	}
+	for (; *offset_pointer; offset_pointer++)
 	{
 		if (*offset_pointer == '(')
 		{
@@ -229,12 +248,18 @@ void sw(char **tokens)
 		}
 	}
 
-	*offset_pointer++;
+	if (negative)
+	{
+		offset = offset * -1;
+	}
+
+	offset_pointer++;
 
 	bool memory_address_initialized = false;
 	int32_t memory_address;
 
-	for (; *offset_pointer; *offset_pointer++)
+	// Loops through string to get memory address.
+	for (; *offset_pointer; offset_pointer++)
 	{
 		if (*offset_pointer == ')')
 		{
@@ -259,21 +284,16 @@ void sw(char **tokens)
 	int32_t write = write_address(data_to_write, store_in, mem_file);
 	if (write == (int32_t)NULL)
 		printf("ERROR: Unsucessful write to address %0X\n", 0x40);
-	// int32_t read = read_address(get_from, mem_file);
-
-	// printf("GET FROM DECIMAL: %i\n", get_from);
-	// printf("GET FROM HEX: %lX\n", get_from);
-	// printf("Read address %lu (0x%lX): %lu (0x%lX)\n", get_from, get_from, read, read); // %lu -> format as an long-unsigned
-	// reg[store_in] = read;
 }
 
 void lw(char **tokens)
 {
+	// Loops through string to get the number where info will be stored.
 	char *mem_file = "mem.txt";
 	int32_t store_in = -1;
 	char *to_store_in_pointer = *tokens;
-	*to_store_in_pointer++;
-	for (; *to_store_in_pointer; *to_store_in_pointer++)
+	to_store_in_pointer++;
+	for (; *to_store_in_pointer; to_store_in_pointer++)
 	{
 		if (store_in == -1)
 		{
@@ -285,13 +305,20 @@ void lw(char **tokens)
 			store_in = store_in + (*to_store_in_pointer - '0');
 		}
 	}
-	**tokens++;
+	tokens++;
 
+	// Loops through string to get offset
 	bool offset_initialized = false;
+	bool negative = false;
 	int32_t offset;
 	char *offset_pointer = *tokens;
 
-	for (; *offset_pointer; *offset_pointer++)
+	if (*offset_pointer == '-')
+	{
+		negative = true;
+		offset_pointer++;
+	}
+	for (; *offset_pointer; offset_pointer++)
 	{
 		if (*offset_pointer == '(')
 		{
@@ -309,12 +336,18 @@ void lw(char **tokens)
 		}
 	}
 
-	*offset_pointer++;
+	if (negative)
+	{
+		offset = offset * -1;
+	}
 
+	offset_pointer++;
+
+	// Loops through string to get memory address.
 	bool memory_address_initializd = false;
 	int32_t memory_address;
 
-	for (; *offset_pointer; *offset_pointer++)
+	for (; *offset_pointer; offset_pointer++)
 	{
 		if (*offset_pointer == ')')
 		{
@@ -335,8 +368,6 @@ void lw(char **tokens)
 	int32_t get_from = offset + memory_address;
 	int32_t read = read_address(get_from, mem_file);
 
-	// printf("GET FROM DECIMAL: %i\n", get_from);
-	// printf("GET FROM HEX: %lX\n", get_from);
 	printf("Read address %lu (0x%lX): %lu (0x%lX)\n", get_from, get_from, read, read); // %lu -> format as an long-unsigned
 	reg[store_in] = read;
 }
@@ -348,9 +379,9 @@ void lw(char **tokens)
 bool interpret(char *instr)
 {
 	char **tokens;
-	tokens = tokenize(instr, " ");
+	tokens = tokenize(instr);
 	int expressionInt = customSwitch(*tokens);
-	*tokens++;
+	tokens++;
 
 	/*
 	1 -> LW
@@ -445,7 +476,7 @@ int main()
 	// Below is a sample program to a write-read. Overwrite this with your own code.
 	//write_read_demo();
 
-	printf(" RV32 Interpreter.\nType RV32 instructions. Use upper-case letters and space as a delimiter.\nEnter 'EOF' character to end program\n");
+	printf("RV32 Interpreter.\nType RV32 instructions. Use upper-case letters and space as a delimiter.\n Please enter all numbers in decimal fomtat.\n Enter 'EOF' character to end program\n");
 
 	char *instruction = malloc(1000 * sizeof(char));
 	bool is_null = false;
